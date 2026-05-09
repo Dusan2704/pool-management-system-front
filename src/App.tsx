@@ -4,6 +4,11 @@ import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { RegisterPage } from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
+import SessionsPage from './pages/SessionsPage';
+import AdminSessionsPage from './pages/admin/AdminSessionsPage';
+import { ProtectedRoute } from './auth/ProtectedRoute';
+import { AdminRoute } from './auth/AdminRoute';
 
 function App() {
   return (
@@ -25,6 +30,9 @@ function App() {
               />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="/sessions" element={<ProtectedRoute><SessionsPage /></ProtectedRoute>} />
+              <Route path="/admin/sessions" element={<AdminRoute><AdminSessionsPage /></AdminRoute>} />
             </Routes>
           </main>
           <Footer />
