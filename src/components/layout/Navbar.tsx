@@ -70,9 +70,9 @@ export function Navbar() {
                     Moje rezervacije
                   </Link>
                 )}
-                <span className="text-sm text-blue-100">
+                <Link to="/profile" className="text-sm text-blue-100 hover:text-white transition-colors">
                   {user.firstName} {user.lastName}
-                </span>
+                </Link>
                 {user.role === 'admin' && (
                   <span className="bg-yellow-400 text-yellow-900 text-xs font-semibold px-2 py-0.5 rounded-full">
                     Admin
@@ -106,9 +106,13 @@ export function Navbar() {
           <div className="md:hidden py-3 border-t border-blue-500 space-y-2">
             {user ? (
               <>
-                <span className="block py-2 text-sm text-blue-200">
+                <Link
+                  to="/profile"
+                  className="block py-2 text-sm text-blue-200 hover:text-white transition-colors"
+                  onClick={() => setMenuOpen(false)}
+                >
                   {user.firstName} {user.lastName}
-                </span>
+                </Link>
                 {user.role === 'admin' && (
                   <Link
                     to="/sessions"
