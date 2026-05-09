@@ -58,17 +58,19 @@ export function Navbar() {
             {user ? (
               <>
                 {user.role === 'admin' && (
-                  <Link to="/sessions" className="hover:text-blue-100 transition-colors text-sm">
+                  <Link to="/admin/sessions" className="hover:text-blue-100 transition-colors text-sm">
                     Termini
                   </Link>
                 )}
                 {user.role === 'user' && (
-                  <Link
-                    to="/my-reservations"
-                    className="hover:text-blue-100 transition-colors text-sm"
-                  >
-                    Moje rezervacije
-                  </Link>
+                  <>
+                    <Link to="/sessions" className="hover:text-blue-100 transition-colors text-sm">
+                      Termini
+                    </Link>
+                    <Link to="/my-reservations" className="hover:text-blue-100 transition-colors text-sm">
+                      Moje rezervacije
+                    </Link>
+                  </>
                 )}
                 <Link to="/profile" className="text-sm text-blue-100 hover:text-white transition-colors">
                   {user.firstName} {user.lastName}
@@ -115,7 +117,7 @@ export function Navbar() {
                 </Link>
                 {user.role === 'admin' && (
                   <Link
-                    to="/sessions"
+                    to="/admin/sessions"
                     className="block py-2 hover:text-blue-100 transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
@@ -123,13 +125,22 @@ export function Navbar() {
                   </Link>
                 )}
                 {user.role === 'user' && (
-                  <Link
-                    to="/my-reservations"
-                    className="block py-2 hover:text-blue-100 transition-colors"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Moje rezervacije
-                  </Link>
+                  <>
+                    <Link
+                      to="/sessions"
+                      className="block py-2 hover:text-blue-100 transition-colors"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Termini
+                    </Link>
+                    <Link
+                      to="/my-reservations"
+                      className="block py-2 hover:text-blue-100 transition-colors"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Moje rezervacije
+                    </Link>
+                  </>
                 )}
                 <button
                   onClick={handleLogout}
