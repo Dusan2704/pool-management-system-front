@@ -1,16 +1,39 @@
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useAuth } from '../../auth/AuthContext';
 
 export function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    setMenuOpen(false);
+    await logout();
+    navigate('/login');
+  }
 
   return (
     <nav className="bg-blue-600 text-white shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="text-xl font-bold flex items-center gap-2 hover:text-blue-100 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+          <Link
+            to="/"
+            className="text-xl font-bold flex items-center gap-2 hover:text-blue-100 transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+              />
             </svg>
             Bazeni
           </Link>
@@ -21,25 +44,117 @@ export function Navbar() {
             aria-label="Otvori navigaciju"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={menuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d={menuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
+              />
             </svg>
           </button>
 
+          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-4">
-            <Link to="/login" className="hover:text-blue-100 transition-colors">Prijava</Link>
-            <Link to="/register" className="bg-white text-blue-600 px-4 py-1.5 rounded-md font-medium hover:bg-blue-50 transition-colors">
-              Registracija
-            </Link>
+            {user ? (
+              <>
+                {user.role === 'admin' && (
+                  <Link to="/sessions" className="hover:text-blue-100 transition-colors text-sm">
+                    Termini
+                  </Link>
+                )}
+                {user.role === 'user' && (
+                  <Link
+                    to="/my-reservations"
+                    className="hover:text-blue-100 transition-colors text-sm"
+                  >
+                    Moje rezervacije
+                  </Link>
+                )}
+                <span className="text-sm text-blue-100">
+                  {user.firstName} {user.lastName}
+                </span>
+                {user.role === 'admin' && (
+                  <span className="bg-yellow-400 text-yellow-900 text-xs font-semibold px-2 py-0.5 rounded-full">
+                    Admin
+                  </span>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="bg-white text-blue-600 px-4 py-1.5 rounded-md font-medium hover:bg-blue-50 transition-colors text-sm"
+                >
+                  Odjavi se
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="hover:text-blue-100 transition-colors">
+                  Prijava
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-white text-blue-600 px-4 py-1.5 rounded-md font-medium hover:bg-blue-50 transition-colors"
+                >
+                  Registracija
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
+        {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden py-3 border-t border-blue-500 space-y-2">
-            <Link to="/login" className="block py-2 hover:text-blue-100 transition-colors" onClick={() => setMenuOpen(false)}>Prijava</Link>
-            <Link to="/register" className="block py-2 hover:text-blue-100 transition-colors" onClick={() => setMenuOpen(false)}>Registracija</Link>
+            {user ? (
+              <>
+                <span className="block py-2 text-sm text-blue-200">
+                  {user.firstName} {user.lastName}
+                </span>
+                {user.role === 'admin' && (
+                  <Link
+                    to="/sessions"
+                    className="block py-2 hover:text-blue-100 transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Termini
+                  </Link>
+                )}
+                {user.role === 'user' && (
+                  <Link
+                    to="/my-reservations"
+                    className="block py-2 hover:text-blue-100 transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Moje rezervacije
+                  </Link>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left py-2 hover:text-blue-100 transition-colors"
+                >
+                  Odjavi se
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="block py-2 hover:text-blue-100 transition-colors"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Prijava
+                </Link>
+                <Link
+                  to="/register"
+                  className="block py-2 hover:text-blue-100 transition-colors"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Registracija
+                </Link>
+              </>
+            )}
           </div>
         )}
       </div>
     </nav>
-  )
+  );
 }
