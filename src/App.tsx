@@ -9,6 +9,7 @@ import SessionsPage from './pages/SessionsPage';
 import AdminSessionsPage from './pages/admin/AdminSessionsPage';
 import AdminPagesPage from './pages/admin/AdminPagesPage';
 import MyReservationsPage from './pages/MyReservationsPage';
+import HomePage from './pages/HomePage';
 import PagesPage from './pages/PagesPage';
 import PageDetailPage from './pages/PageDetailPage';
 import { ProtectedRoute } from './auth/ProtectedRoute';
@@ -22,16 +23,7 @@ function App() {
           <Navbar />
           <main className="flex-grow">
             <Routes>
-              <Route
-                path="/"
-                element={
-                  <div className="container mx-auto px-4 py-8 text-center">
-                    <h1 className="text-3xl font-bold text-blue-600">
-                      Dobrodosli na aplikaciju PoolBuddy
-                    </h1>
-                  </div>
-                }
-              />
+              <Route path="/" element={<HomePage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
