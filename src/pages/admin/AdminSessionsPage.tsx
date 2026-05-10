@@ -14,7 +14,7 @@ type ModalState =
   | { type: 'delete'; session: PoolSession };
 
 function formatDate(d: string) {
-  return new Date(d).toLocaleDateString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  return new Date(d.slice(0, 10) + 'T12:00:00').toLocaleDateString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 function formatTime(t: string) { return t.slice(0, 5); }
 
@@ -309,7 +309,7 @@ function SessionFormModal({
     resolver: zodResolver(sessionFormSchema),
     defaultValues: session
       ? {
-          session_date: session.session_date,
+          session_date: session.session_date.slice(0, 10),
           start_time: session.start_time.slice(0, 5),
           end_time: session.end_time.slice(0, 5),
           capacity: session.capacity,

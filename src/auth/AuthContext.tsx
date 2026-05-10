@@ -37,60 +37,97 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const interceptorRef = useRef<number | null>(null);
+
+  // Ref always holds the latest token — request interceptor reads from here,
+  // so it never has a stale closure value regardless of when it was registered.
+  const accessTokenRef = useRef<string | null>(null);
+
+  // Refresh-queue: while one refresh is in-flight, park subsequent callers here
+  // so we never send the same refresh token to the backend twice.
+  const isRefreshingRef = useRef(false);
+  const refreshSubscribers = useRef<Array<(token: string | null) => void>>([]);
 
   const clearAuth = useCallback(() => {
+    accessTokenRef.current = null;
     setUser(null);
     setAccessToken(null);
     localStorage.removeItem('refresh_token');
   }, []);
 
   const applyAccessToken = useCallback((token: string) => {
+    accessTokenRef.current = token;
     setAccessToken(token);
     setUser(parseJwtPayload(token));
   }, []);
 
-  // Wire up apiClient interceptors whenever accessToken changes
+  // Register the request interceptor ONCE. It reads from the ref, so it is
+  // always up-to-date without needing to be re-registered on every token change.
   useEffect(() => {
-    if (interceptorRef.current !== null) {
-      apiClient.interceptors.request.eject(interceptorRef.current);
-    }
-    interceptorRef.current = apiClient.interceptors.request.use((config) => {
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
+    const reqId = apiClient.interceptors.request.use((config) => {
+      const token = accessTokenRef.current;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     });
-  }, [accessToken]);
 
-  // Response interceptor: 401 → try refresh once, then retry
-  useEffect(() => {
-    const id = apiClient.interceptors.response.use(
+    // Response interceptor: serialize refresh calls via a queue.
+    const resId = apiClient.interceptors.response.use(
       (res) => res,
       async (error) => {
         const original = error.config as { _retry?: boolean };
-        if (error.response?.status === 401 && !original._retry) {
-          original._retry = true;
-          const storedToken = localStorage.getItem('refresh_token');
-          if (storedToken) {
-            try {
-              const tokens = await authApi.refresh(storedToken);
-              localStorage.setItem('refresh_token', tokens.refresh_token);
-              applyAccessToken(tokens.access_token);
-              error.config.headers.Authorization = `Bearer ${tokens.access_token}`;
-              return apiClient(error.config);
-            } catch {
-              clearAuth();
-            }
-          } else {
-            clearAuth();
-          }
+
+        if (error.response?.status !== 401 || original._retry) {
+          return Promise.reject(error);
         }
-        return Promise.reject(error);
+
+        original._retry = true;
+
+        if (isRefreshingRef.current) {
+          // Another refresh is already in-flight — wait for it.
+          return new Promise((resolve, reject) => {
+            refreshSubscribers.current.push((newToken) => {
+              if (!newToken) { reject(error); return; }
+              error.config.headers.Authorization = `Bearer ${newToken}`;
+              resolve(apiClient(error.config));
+            });
+          });
+        }
+
+        isRefreshingRef.current = true;
+        const storedToken = localStorage.getItem('refresh_token');
+
+        if (!storedToken) {
+          isRefreshingRef.current = false;
+          clearAuth();
+          return Promise.reject(error);
+        }
+
+        try {
+          const tokens = await authApi.refresh(storedToken);
+          localStorage.setItem('refresh_token', tokens.refresh_token);
+          applyAccessToken(tokens.access_token);
+
+          // Resolve all waiting requests with the new token.
+          refreshSubscribers.current.forEach((cb) => cb(tokens.access_token));
+          refreshSubscribers.current = [];
+
+          error.config.headers.Authorization = `Bearer ${tokens.access_token}`;
+          return apiClient(error.config);
+        } catch {
+          refreshSubscribers.current.forEach((cb) => cb(null));
+          refreshSubscribers.current = [];
+          clearAuth();
+          return Promise.reject(error);
+        } finally {
+          isRefreshingRef.current = false;
+        }
       },
     );
+
     return () => {
-      apiClient.interceptors.response.eject(id);
+      apiClient.interceptors.request.eject(reqId);
+      apiClient.interceptors.response.eject(resId);
     };
   }, [applyAccessToken, clearAuth]);
 
@@ -121,15 +158,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     const stored = localStorage.getItem('refresh_token');
-    if (stored && accessToken) {
+    if (stored && accessTokenRef.current) {
       try {
-        await authApi.logout(stored, accessToken);
+        await authApi.logout(stored, accessTokenRef.current);
       } catch {
         // best-effort
       }
     }
     clearAuth();
-  }, [accessToken, clearAuth]);
+  }, [clearAuth]);
 
   return (
     <AuthContext.Provider value={{ user, isLoading, accessToken, login, logout }}>

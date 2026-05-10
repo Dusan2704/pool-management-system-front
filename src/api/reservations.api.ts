@@ -6,6 +6,8 @@ export interface MyReservation {
   session_date: string;
   start_time: string;
   end_time: string;
+  capacity: number;
+  session_status: 'open' | 'cancelled';
   status: 'active' | 'cancelled_by_user' | 'cancelled_by_admin';
   reserved_at: string;
   cancelled_at: string | null;
