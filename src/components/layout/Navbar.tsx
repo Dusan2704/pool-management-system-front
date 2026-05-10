@@ -55,12 +55,20 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-4">
+            <Link to="/stranice" className="hover:text-blue-100 transition-colors text-sm">
+              Informacije
+            </Link>
             {user ? (
               <>
                 {user.role === 'admin' && (
-                  <Link to="/admin/sessions" className="hover:text-blue-100 transition-colors text-sm">
-                    Termini
-                  </Link>
+                  <>
+                    <Link to="/admin/sessions" className="hover:text-blue-100 transition-colors text-sm">
+                      Termini
+                    </Link>
+                    <Link to="/admin/pages" className="hover:text-blue-100 transition-colors text-sm">
+                      Stranice
+                    </Link>
+                  </>
                 )}
                 {user.role === 'user' && (
                   <>
@@ -106,6 +114,13 @@ export function Navbar() {
         {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden py-3 border-t border-blue-500 space-y-2">
+            <Link
+              to="/stranice"
+              className="block py-2 hover:text-blue-100 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              Informacije
+            </Link>
             {user ? (
               <>
                 <Link
@@ -116,13 +131,22 @@ export function Navbar() {
                   {user.firstName} {user.lastName}
                 </Link>
                 {user.role === 'admin' && (
-                  <Link
-                    to="/admin/sessions"
-                    className="block py-2 hover:text-blue-100 transition-colors"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Termini
-                  </Link>
+                  <>
+                    <Link
+                      to="/admin/sessions"
+                      className="block py-2 hover:text-blue-100 transition-colors"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Termini
+                    </Link>
+                    <Link
+                      to="/admin/pages"
+                      className="block py-2 hover:text-blue-100 transition-colors"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Stranice
+                    </Link>
+                  </>
                 )}
                 {user.role === 'user' && (
                   <>
