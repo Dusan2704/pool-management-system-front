@@ -61,9 +61,14 @@ export function Navbar() {
             {user ? (
               <>
                 {user.role === 'admin' && (
-                  <Link to="/admin/sessions" className="hover:text-blue-100 transition-colors text-sm">
-                    Termini
-                  </Link>
+                  <>
+                    <Link to="/admin/sessions" className="hover:text-blue-100 transition-colors text-sm">
+                      Termini
+                    </Link>
+                    <Link to="/admin/pages" className="hover:text-blue-100 transition-colors text-sm">
+                      Stranice
+                    </Link>
+                  </>
                 )}
                 {user.role === 'user' && (
                   <>
@@ -126,13 +131,22 @@ export function Navbar() {
                   {user.firstName} {user.lastName}
                 </Link>
                 {user.role === 'admin' && (
-                  <Link
-                    to="/admin/sessions"
-                    className="block py-2 hover:text-blue-100 transition-colors"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Termini
-                  </Link>
+                  <>
+                    <Link
+                      to="/admin/sessions"
+                      className="block py-2 hover:text-blue-100 transition-colors"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Termini
+                    </Link>
+                    <Link
+                      to="/admin/pages"
+                      className="block py-2 hover:text-blue-100 transition-colors"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Stranice
+                    </Link>
+                  </>
                 )}
                 {user.role === 'user' && (
                   <>

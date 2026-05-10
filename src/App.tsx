@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import SessionsPage from './pages/SessionsPage';
 import AdminSessionsPage from './pages/admin/AdminSessionsPage';
+import AdminPagesPage from './pages/admin/AdminPagesPage';
 import MyReservationsPage from './pages/MyReservationsPage';
 import PagesPage from './pages/PagesPage';
 import PageDetailPage from './pages/PageDetailPage';
@@ -39,6 +40,7 @@ function App() {
               <Route path="/my-reservations" element={<ProtectedRoute><MyReservationsPage /></ProtectedRoute>} />
               <Route path="/stranice" element={<PagesPage />} />
               <Route path="/stranice/:slug" element={<PageDetailPage />} />
+              <Route path="/admin/pages" element={<AdminRoute><AdminPagesPage /></AdminRoute>} />
             </Routes>
           </main>
           <Footer />
