@@ -8,7 +8,7 @@ interface SessionCardProps {
 }
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('sr-RS', {
+  return new Date(dateStr.slice(0, 10) + 'T12:00:00').toLocaleDateString('sr-RS', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
