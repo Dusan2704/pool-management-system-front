@@ -131,23 +131,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [applyAccessToken, clearAuth]);
 
-  // On mount: attempt silent refresh if refresh token exists
+  // On mount: attempt silent refresh if refresh token exists.
+  // Sets isRefreshingRef so the response interceptor queues rather than
+  // firing a second concurrent refresh with the same token.
   useEffect(() => {
     const stored = localStorage.getItem('refresh_token');
     if (!stored) {
       setIsLoading(false);
       return;
     }
+    isRefreshingRef.current = true;
     authApi
       .refresh(stored)
       .then((tokens) => {
         localStorage.setItem('refresh_token', tokens.refresh_token);
         applyAccessToken(tokens.access_token);
+        refreshSubscribers.current.forEach((cb) => cb(tokens.access_token));
+        refreshSubscribers.current = [];
       })
       .catch(() => {
         localStorage.removeItem('refresh_token');
+        refreshSubscribers.current.forEach((cb) => cb(null));
+        refreshSubscribers.current = [];
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        isRefreshingRef.current = false;
+        setIsLoading(false);
+      });
   }, [applyAccessToken]);
 
   const login = useCallback(async (email: string, password: string) => {
