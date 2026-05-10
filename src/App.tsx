@@ -8,6 +8,8 @@ import ProfilePage from './pages/ProfilePage';
 import SessionsPage from './pages/SessionsPage';
 import AdminSessionsPage from './pages/admin/AdminSessionsPage';
 import MyReservationsPage from './pages/MyReservationsPage';
+import PagesPage from './pages/PagesPage';
+import PageDetailPage from './pages/PageDetailPage';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { AdminRoute } from './auth/AdminRoute';
 
@@ -35,6 +37,8 @@ function App() {
               <Route path="/sessions" element={<ProtectedRoute><SessionsPage /></ProtectedRoute>} />
               <Route path="/admin/sessions" element={<AdminRoute><AdminSessionsPage /></AdminRoute>} />
               <Route path="/my-reservations" element={<ProtectedRoute><MyReservationsPage /></ProtectedRoute>} />
+              <Route path="/stranice" element={<PagesPage />} />
+              <Route path="/stranice/:slug" element={<PageDetailPage />} />
             </Routes>
           </main>
           <Footer />

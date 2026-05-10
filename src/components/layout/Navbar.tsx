@@ -55,6 +55,9 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-4">
+            <Link to="/stranice" className="hover:text-blue-100 transition-colors text-sm">
+              Informacije
+            </Link>
             {user ? (
               <>
                 {user.role === 'admin' && (
@@ -106,6 +109,13 @@ export function Navbar() {
         {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden py-3 border-t border-blue-500 space-y-2">
+            <Link
+              to="/stranice"
+              className="block py-2 hover:text-blue-100 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              Informacije
+            </Link>
             {user ? (
               <>
                 <Link
