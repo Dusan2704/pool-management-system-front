@@ -38,12 +38,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Ref always holds the latest token — request interceptor reads from here,
-  // so it never has a stale closure value regardless of when it was registered.
   const accessTokenRef = useRef<string | null>(null);
 
-  // Refresh-queue: while one refresh is in-flight, park subsequent callers here
-  // so we never send the same refresh token to the backend twice.
   const isRefreshingRef = useRef(false);
   const refreshSubscribers = useRef<Array<(token: string | null) => void>>([]);
 
@@ -60,8 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(parseJwtPayload(token));
   }, []);
 
-  // Register the request interceptor ONCE. It reads from the ref, so it is
-  // always up-to-date without needing to be re-registered on every token change.
+
   useEffect(() => {
     const reqId = apiClient.interceptors.request.use((config) => {
       const token = accessTokenRef.current;
@@ -71,7 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return config;
     });
 
-    // Response interceptor: serialize refresh calls via a queue.
     const resId = apiClient.interceptors.response.use(
       (res) => res,
       async (error) => {
@@ -84,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         original._retry = true;
 
         if (isRefreshingRef.current) {
-          // Another refresh is already in-flight — wait for it.
+   
           return new Promise((resolve, reject) => {
             refreshSubscribers.current.push((newToken) => {
               if (!newToken) { reject(error); return; }
@@ -108,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           localStorage.setItem('refresh_token', tokens.refresh_token);
           applyAccessToken(tokens.access_token);
 
-          // Resolve all waiting requests with the new token.
+          
           refreshSubscribers.current.forEach((cb) => cb(tokens.access_token));
           refreshSubscribers.current = [];
 
@@ -131,9 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [applyAccessToken, clearAuth]);
 
-  // On mount: attempt silent refresh if refresh token exists.
-  // Sets isRefreshingRef so the response interceptor queues rather than
-  // firing a second concurrent refresh with the same token.
+
   useEffect(() => {
     const stored = localStorage.getItem('refresh_token');
     if (!stored) {
@@ -172,7 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         await authApi.logout(stored, accessTokenRef.current);
       } catch {
-        // best-effort
+     
       }
     }
     clearAuth();

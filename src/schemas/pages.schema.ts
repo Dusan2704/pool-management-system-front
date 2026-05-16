@@ -7,7 +7,7 @@ export const pageFormSchema = z.object({
   slug:         z.string().regex(slugRegex, 'Slug: samo mala slova i crtice (npr. o-nama)').max(80),
   content:      z.string(),
   is_published: z.boolean(),
-  sort_order:   z.number({ invalid_type_error: 'Unesite broj' }).int().min(0),
+  sort_order:   z.coerce.number().int().min(0),
 });
 
 export type PageFormInput = z.infer<typeof pageFormSchema>;

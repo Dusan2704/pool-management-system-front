@@ -8,7 +8,7 @@ interface SessionCardProps {
 }
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr.slice(0, 10) + 'T12:00:00').toLocaleDateString('sr-RS', {
+  return new Date(dateStr.slice(0, 10) + 'T12:00:00').toLocaleDateString('sr-Latn-RS', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -44,6 +44,7 @@ export function SessionCard({ session, onReserved }: SessionCardProps) {
     }
   }
 
+  const isPast = new Date(`${session.session_date.slice(0, 10)}T${session.start_time}`) <= new Date();
   const freePercent = Math.round((session.free_spots / session.capacity) * 100);
   const capacityColor =
     freePercent > 50 ? 'bg-green-500' : freePercent > 20 ? 'bg-yellow-500' : 'bg-red-500';
@@ -82,6 +83,10 @@ export function SessionCard({ session, onReserved }: SessionCardProps) {
       {success ? (
         <p className="text-sm text-green-700 bg-green-50 rounded-lg px-3 py-2 font-medium text-center">
           Rezervacija uspešna!
+        </p>
+      ) : isPast ? (
+        <p className="text-sm text-gray-500 bg-gray-50 rounded-lg px-3 py-2 text-center">
+          Termin je prošao
         </p>
       ) : (
         <button

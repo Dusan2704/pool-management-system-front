@@ -20,7 +20,12 @@ export default function MyReservationsPage() {
     fetchReservations();
   }, []);
 
-  const active = reservations.filter((r) => r.status === 'active');
+  function isSessionPast(r: MyReservation) {
+    return new Date(`${r.session_date.slice(0, 10)}T${r.end_time}`) < new Date();
+  }
+
+  const upcoming  = reservations.filter((r) => r.status === 'active' && !isSessionPast(r));
+  const completed = reservations.filter((r) => r.status === 'active' && isSessionPast(r));
   const cancelled = reservations.filter((r) => r.status !== 'active');
 
   return (
@@ -41,13 +46,26 @@ export default function MyReservationsPage() {
         </div>
       )}
 
-      {active.length > 0 && (
+      {upcoming.length > 0 && (
         <section className="mb-8">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            Aktivne rezervacije
+            Predstojeće rezervacije
           </h2>
           <div className="flex flex-col gap-3">
-            {active.map((r) => (
+            {upcoming.map((r) => (
+              <ReservationItem key={r.reservation_id} reservation={r} onCancelled={fetchReservations} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {completed.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            Prošli termini
+          </h2>
+          <div className="flex flex-col gap-3">
+            {completed.map((r) => (
               <ReservationItem key={r.reservation_id} reservation={r} onCancelled={fetchReservations} />
             ))}
           </div>
