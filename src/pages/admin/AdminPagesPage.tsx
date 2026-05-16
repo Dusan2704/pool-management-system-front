@@ -282,7 +282,7 @@ function PageFormModal({
             <input
               type="number"
               min={0}
-              {...register('sort_order', { valueAsNumber: true })}
+              {...register('sort_order')}
               className={inputCls(!!errors.sort_order)}
             />
           </Field>
@@ -300,14 +300,14 @@ function PageFormModal({
 
         <Field label="Sadržaj (HTML)" error={errors.content?.message}>
           <textarea
-            rows={10}
+            rows={8}
             {...register('content')}
             className={`${inputCls(!!errors.content)} resize-y font-mono text-xs`}
             placeholder="<p>Tekst stranice...</p>"
           />
         </Field>
 
-        <div className="flex gap-3 justify-end pt-2">
+        <div className="flex gap-3 justify-end pt-3 mt-2 border-t border-gray-100 sticky bottom-0 bg-white -mx-6 px-6 pb-5">
           <button
             type="button"
             onClick={onClose}
@@ -316,8 +316,9 @@ function PageFormModal({
             Odustani
           </button>
           <button
-            type="submit"
+            type="button"
             disabled={isSubmitting}
+            onClick={handleSubmit(onSubmit)}
             className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
           >
             {isSubmitting ? 'Čuvanje...' : 'Sačuvaj'}

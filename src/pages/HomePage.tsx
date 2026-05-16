@@ -22,7 +22,7 @@ export default function HomePage() {
   );
 }
 
-/* ── Hero ─────────────────────────────────────────────────────── */
+/*Hero */
 
 function HeroSection({ user }: { user: { role: string; firstName: string } | null }) {
   return (
@@ -82,7 +82,7 @@ function HeroSection({ user }: { user: { role: string; firstName: string } | nul
   );
 }
 
-/* ── Features ─────────────────────────────────────────────────── */
+/*Features*/ 
 
 const features = [
   {
@@ -157,7 +157,7 @@ function FeaturesSection() {
   );
 }
 
-/* ── How it works ─────────────────────────────────────────────── */
+/* How it works*/
 
 const steps = [
   {
@@ -202,7 +202,7 @@ function HowItWorksSection() {
           ))}
         </div>
 
-        {/* Connector lines (desktop only) */}
+       
         <div className="hidden md:flex justify-center items-center gap-0 -mt-[72px] mb-8 pointer-events-none select-none">
           <div className="w-1/3" />
           <div className="flex-1 border-t-2 border-dashed border-blue-200" />
@@ -215,7 +215,7 @@ function HowItWorksSection() {
   );
 }
 
-/* ── Info pages ───────────────────────────────────────────────── */
+/*Info pages */
 
 function InfoPagesSection({ pages }: { pages: PublicPage[] }) {
   return (
@@ -263,7 +263,7 @@ function InfoPagesSection({ pages }: { pages: PublicPage[] }) {
   );
 }
 
-/* ── Bottom CTA ───────────────────────────────────────────────── */
+/* Bottom CTA*/
 
 function CtaSection() {
   return (

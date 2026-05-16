@@ -301,9 +301,14 @@ function SessionFormModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const nowTime = new Date().toTimeString().slice(0, 5);
+  const isCreate = !session;
+
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<SessionFormInput>({
     resolver: zodResolver(sessionFormSchema),
@@ -316,6 +321,9 @@ function SessionFormModal({
         }
       : undefined,
   });
+
+  const selectedDate = watch('session_date');
+  const minTime = isCreate && selectedDate === today ? nowTime : undefined;
 
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -342,11 +350,11 @@ function SessionFormModal({
       )}
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         <Field label="Datum" error={errors.session_date?.message}>
-          <input type="date" {...register('session_date')} className={inputCls(!!errors.session_date)} />
+          <input type="date" {...register('session_date')} min={isCreate ? today : undefined} className={inputCls(!!errors.session_date)} />
         </Field>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Početak" error={errors.start_time?.message}>
-            <input type="time" {...register('start_time')} className={inputCls(!!errors.start_time)} />
+            <input type="time" {...register('start_time')} min={minTime} className={inputCls(!!errors.start_time)} />
           </Field>
           <Field label="Kraj" error={errors.end_time?.message}>
             <input type="time" {...register('end_time')} className={inputCls(!!errors.end_time)} />

@@ -19,8 +19,8 @@ function formatTime(t: string) {
   return t.slice(0, 5);
 }
 
-function isPast(dateStr: string): boolean {
-  return new Date(dateStr.slice(0, 10) + 'T12:00:00') < new Date(new Date().toDateString());
+function isPast(dateStr: string, endTime: string): boolean {
+  return new Date(`${dateStr.slice(0, 10)}T${endTime}`) < new Date();
 }
 
 const STATUS_LABEL: Record<MyReservation['status'], string> = {
@@ -35,11 +35,13 @@ const STATUS_STYLE: Record<MyReservation['status'], string> = {
   cancelled_by_admin: 'bg-orange-100 text-orange-700',
 };
 
+const PAST_ACTIVE_STYLE = 'bg-blue-100 text-blue-700';
+
 export function ReservationItem({ reservation: r, onCancelled }: ReservationItemProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const past = isPast(r.session_date);
+  const past = isPast(r.session_date, r.end_time);
   const canCancel = r.status === 'active' && !past;
   const isCancelled = r.status !== 'active';
 
@@ -77,9 +79,9 @@ export function ReservationItem({ reservation: r, onCancelled }: ReservationItem
         </div>
 
         <div className="flex flex-col items-end gap-1.5 shrink-0">
-          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLE[r.status]}`}>
+          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${r.status === 'active' && past ? PAST_ACTIVE_STYLE : STATUS_STYLE[r.status]}`}>
             {isCancelled && <span className="mr-1">✕</span>}
-            {STATUS_LABEL[r.status]}
+            {r.status === 'active' && past ? 'Završen' : STATUS_LABEL[r.status]}
           </span>
           {r.status === 'cancelled_by_admin' && (
             <span className="text-xs text-orange-600">Otkazao administrator</span>

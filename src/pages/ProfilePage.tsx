@@ -27,7 +27,7 @@ export default function ProfilePage() {
       })
       .catch(() => showToast('Greška pri učitavanju profila', 'error'))
       .finally(() => setLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  
   }, []);
 
   async function onContactSubmit(data: UpdateContactInput) {
@@ -83,11 +83,12 @@ export default function ProfilePage() {
             <dt className="text-gray-500">Telefon</dt>
             <dd className="text-gray-800 font-medium">{profile.phone}</dd>
             <dt className="text-gray-500">Uloga</dt>
-            <dd>
+             <dd className="text-gray-800 font-medium">{profile.role === 'admin' ? 'Administrator' : 'Korisnik'}</dd>
+            {/* <dd>
               <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${profile.role === 'admin' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}`}>
                 {profile.role === 'admin' ? 'Administrator' : 'Korisnik'}
               </span>
-            </dd>
+            </dd> */}
             <dt className="text-gray-500">Nalog kreiran</dt>
             <dd className="text-gray-800 font-medium">{new Date(profile.created_at).toLocaleDateString('sr-RS')}</dd>
           </dl>
