@@ -57,6 +57,7 @@ export default function LoginPage() {
             </label>
             <input
               id="email"
+              placeholder='primer@bazeni.com'
               type="email"
               autoComplete="email"
               {...register('email')}

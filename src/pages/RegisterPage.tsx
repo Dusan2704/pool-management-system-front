@@ -71,9 +71,10 @@ export function RegisterPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="first_name" className="block text-sm font-medium text-gray-700 mb-1">
-                Ime
+                Ime*
               </label>
               <input
+                placeholder='npr Marko'
                 id="first_name"
                 type="text"
                 {...register('first_name')}
@@ -88,10 +89,11 @@ export function RegisterPage() {
 
             <div>
               <label htmlFor="last_name" className="block text-sm font-medium text-gray-700 mb-1">
-                Prezime
+                Prezime*
               </label>
               <input
                 id="last_name"
+                placeholder='npr Markovic'
                 type="text"
                 {...register('last_name')}
                 className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -106,10 +108,11 @@ export function RegisterPage() {
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email adresa
+              Email adresa*
             </label>
             <input
               id="email"
+              placeholder='primer@bazeni.com'
               type="email"
               {...register('email')}
               className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -123,10 +126,11 @@ export function RegisterPage() {
 
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-              Broj telefona
+              Broj telefona*
             </label>
             <input
               id="phone"
+              placeholder='npr +381 66442341'
               type="tel"
               {...register('phone')}
               className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -140,7 +144,7 @@ export function RegisterPage() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Lozinka
+              Lozinka*
             </label>
             <input
               id="password"
